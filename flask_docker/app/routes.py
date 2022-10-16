@@ -15,18 +15,7 @@ REQ_SCOPES  = ['repo']
 
 
 #TODOs
-#   Secret Management
-#       In-App
-#           Plain
-#           Obscure
-#           Encrypt
-#       Off-App
-#           Azure KV
-#           AWS Secret Mgr
-#           Docker Swarm Secret
-#           K8s Secret
-#       
-#   User Features
+#   User Features not part of this MVP
 #       Name the org being forked to, name the new repo, flag to fork default branch only
 #
 
