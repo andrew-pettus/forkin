@@ -16,7 +16,7 @@ except:
 #gevent workers are single proc'd and set to two workers
 env = os.getenv("EXEC_ENV", None)
 if env == "DISTRIBUTED":
-    workers = 2
+    workers = 1
 else:
     import multiprocessing
     workers = multiprocessing.cpu_count() * 2 + 1

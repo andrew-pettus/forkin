@@ -1,13 +1,18 @@
-from flask import render_template, request
+from flask import render_template, request, session
 from app import app 
+from uuid import uuid4
 import httpx, json, os
 
 GHC     = os.getenv( 'FORKME_GHC', None )
 GHS     = os.getenv( 'FORKME_GHS', None )
 OWNER   = os.getenv( 'REPO_OWNER', None )
 REPO    = os.getenv( 'REPO_TARGET', None )
+EXEC    = os.getenv( "EXEC_ENV", None )
+
+app.secret_key = os.getenv( "APPSEC", None )
 
 REQ_SCOPES  = ['repo']
+
 
 #TODOs
 #   Secret Management
@@ -27,8 +32,11 @@ REQ_SCOPES  = ['repo']
 
 @app.route('/')
 def home():
-    app.logger.debug('presenting index.html with https://github.com/login/oauth/authorize?client_id={}&scope=repo%20user'.format(GHC))
-    return render_template("index.html", GET_PARAMS = "?client_id={}&scope={}".format(GHC, '%20'.join(REQ_SCOPES)))
+    state = str(uuid4())
+    session['state'] = state
+
+    app.logger.debug('presenting index.html with https://github.com/login/oauth/authorize?client_id={}&scope={}&state={}'.format(GHC,'%20'.join(REQ_SCOPES), state))
+    return render_template("index.html", GET_PARAMS = "?client_id={}&scope={}&state={}".format(GHC, '%20'.join(REQ_SCOPES), state))
 
 
 @app.route('/do-fork-callback-install-oauth')
@@ -38,6 +46,11 @@ def doForkCallbackOAuth():
         if 'error_description' in request.values:
             app.logger.error("OAuth Callback bad args {}".format(request.values))
             return render_template("failed.html", failure_message = request.values['error_description'])
+
+        req_state = request.values['state']
+        if session['state'] != req_state:
+            app.logger.error("OAuth Callback bad state. Expected '{}' but found '{}'".format( session['state'], req_state))
+            return render_template("failed.html", failure_message = "Unknown session.")
 
         session_code = request.values['code']
     except Exception as e:
@@ -65,7 +78,6 @@ def doForkCallbackOAuth():
 
 
 def getAccessToken( session_code ):
-    #ignoring state, hijacking is "possible"
     data = {    'client_id':        GHC,
                 'client_secret':    GHS,
                 'code':             session_code    }

@@ -16,6 +16,8 @@ ENV REPO_TARGET 'forkin'
 ENV FORKME_GHC '86cb9c92aa667f515914'
 ENV FORKME_GHS '9ef7511ebb4d4e945d8bdda89d235fbd00d9abc5'
 
+ENV APPSEC 'sdlkj5_F(SDF#0+]'
+
 #To configure gunicorn based on deployment model
 #ENV EXEC_ENV "DISTRIBUTED"
 ENV EXEC_ENV "SINGLE"
