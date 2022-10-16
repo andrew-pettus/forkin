@@ -1,5 +1,7 @@
 ## forkin
-This application runs a flask service that allows a user to fork this application to their own GitHub account
+This application runs a flask service that allows a user to fork this application to their own GitHub account.
+
+Although it's not strictly required, it is expected that docker is installed to run locally.
 
 ## Two Ways To Try It Out
 
